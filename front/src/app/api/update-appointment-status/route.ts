@@ -1,7 +1,7 @@
 // pages/api/update-appointment-status.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 // Imagina que tienes un método para actualizar tu DB
-import { updateAppointmentStatus } from '../lib/db';
+import { updateAppointmentStatus } from '@/app/lib/db';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { appointmentId, status } = req.body;
