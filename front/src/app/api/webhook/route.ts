@@ -1,37 +1,29 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import getRawBody from 'raw-body';
+import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
 const stripe = new Stripe("sk_test_51Q7otE00ffkRUeeSNKqMZLAVvxk5Eb0hwkkw7cVVYWiWPIPPTSe2fu4p3074vbNxPALEERydW5Vxw6VrKLVgpoq100Y1WEh078", {});
 
-export const config = {
-  api: {
-    bodyParser: false, // Desactiva el bodyParser para recibir el raw body de Stripe
-  },
-};
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const sig = req.headers['stripe-signature'];
+export async function POST(request: Request) {
+  const sig = request.headers.get('stripe-signature');
 
   let event;
 
   try {
-    // Obtiene el cuerpo en formato raw
-    const rawBody = await getRawBody(req);
+    // Obtiene el cuerpo como texto
+    const rawBody = await request.text();
 
     // Construye el evento usando el webhook de Stripe
     event = stripe.webhooks.constructEvent(
-      rawBody.toString(),
+      rawBody,
       sig as string,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
     if (err instanceof Error) {
-      res.status(400).send(`Webhook Error: ${err.message}`);
+      return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
     } else {
-      res.status(400).send(`Webhook Error: Unhandled exception`);
+      return NextResponse.json({ error: 'Webhook Error: Unhandled exception' }, { status: 400 });
     }
-    return;
   }
 
   // Manejar los eventos de Stripe aquí
@@ -42,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (appointmentId) {
       try {
-        // Actualizar el estado de la cita en la base de datos (debes implementar esta parte)
+        // Actualizar el estado de la cita en la base de datos
         await updateAppointmentStatus(appointmentId, 'Pagado');
         console.log(`Pago confirmado y cita ${appointmentId} actualizada a Pagado`);
       } catch (error) {
@@ -51,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   }
 
-  res.status(200).json({ received: true });
+  return NextResponse.json({ received: true }, { status: 200 });
 }
 
 async function updateAppointmentStatus(appointmentId: string, status: string) {
