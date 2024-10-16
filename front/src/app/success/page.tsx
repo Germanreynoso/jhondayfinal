@@ -1,6 +1,6 @@
 "use client"; // Asegúrate de que esto esté al principio del archivo
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter } from 'next/navigation'; // Importación correcta
 import { useSearchParams } from 'next/navigation'; // Importación de parámetros de búsqueda
 
@@ -70,4 +70,11 @@ const SuccessPage = () => {
     );
 };
 
-export default SuccessPage;
+// Envuelve el componente en Suspense
+const WrappedSuccessPage = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <SuccessPage />
+    </Suspense>
+);
+
+export default WrappedSuccessPage;

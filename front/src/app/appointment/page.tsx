@@ -1,11 +1,14 @@
-import React from 'react'
-import AppointmentForm from '@/components/AddApp/AddApp'
+import React, { Suspense } from 'react';
+import AppointmentForm from '@/components/AddApp/AddApp';
+
 const AppointmentPage = () => {
   return (
     <div>
-      <AppointmentForm />
+      <Suspense fallback={<div>Loading...</div>}>
+        <AppointmentForm />
+      </Suspense>
     </div>
-  )
-}
+  );
+};
 
-export default AppointmentPage
+export default AppointmentPage;

@@ -54,8 +54,8 @@ const Agg = ({ category }: { category: ICategory }) => {
         Agregar Cita
       </button>
       <AlertModal
-        show={showModal}
-        onClose={handleCloseModal}
+        showModal={showModal}
+        handleClose={handleCloseModal}
         title={modalContent.title}
         message={modalContent.message}
       />

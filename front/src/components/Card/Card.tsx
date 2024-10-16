@@ -100,8 +100,8 @@ const Card: React.FC<CardProps> = ({
 
       {!userData && (
         <AlertModal
-          show={showModal}
-          onClose={handleModalClose}
+          showModal={showModal}
+          handleClose={handleModalClose}
           title="Visitante in JhonDay Solutions"
           message="El Mejor Servicio Tecnológico"
         />
