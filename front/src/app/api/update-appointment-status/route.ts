@@ -1,17 +1,19 @@
-// pages/api/update-appointment-status.ts
-import { NextApiRequest, NextApiResponse } from 'next';
-// Imagina que tienes un método para actualizar tu DB
-import { updateAppointmentStatus } from '@/app/lib/db';
+import { NextResponse } from 'next/server';
+import { updateAppointmentStatus } from '@/app/lib/db'; // Asegúrate de que esta ruta sea correcta
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { appointmentId, status } = req.body;
-
+export async function PATCH(request: Request) {
   try {
+    const { appointmentId, status } = await request.json(); // Obtener los datos del cuerpo de la solicitud
+
+    if (!appointmentId || !status) {
+      return NextResponse.json({ error: 'Faltan appointmentId o status' }, { status: 400 });
+    }
+
     // Actualizar el estado de la cita en tu base de datos
     await updateAppointmentStatus(appointmentId, status);
-    res.status(200).json({ message: 'Appointment status updated' });
+    return NextResponse.json({ message: 'Estado de la cita actualizado' }, { status: 200 });
   } catch (error) {
-    console.error('Error updating appointment:', error);
-    res.status(500).json({ error: 'Error updating appointment' });
+    console.error('Error actualizando la cita:', error);
+    return NextResponse.json({ error: 'Error al actualizar la cita' }, { status: 500 });
   }
 }
